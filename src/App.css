@@ -298,4 +298,13 @@ p {
 
 
 
+doctor-bg {
+  display: block; /* default */
+}
+
+@media (max-width: 768px) {
+  .doctor-bg {
+    display: none; /* hide on screens <= 768px (mobile) */
+  }
+}
 

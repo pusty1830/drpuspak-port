@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 const Hero = () => {
   return (
     <section
-      className="hero-section text-white position-relative mt-5"
+      className="hero-section text-white position-relative "
       style={{ backgroundColor: "#030c54", overflowX: "hidden" }}
     >
       <div className="container">

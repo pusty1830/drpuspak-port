@@ -16,7 +16,7 @@ const blogPosts = [
     paragraphs: [
       "Orthopedic surgeons are experts in diagnosing and treating musculoskeletal issues, including bones, joints, muscles, and ligaments.",
       "Delaying treatment can lead to worsening pain, reduced mobility, and complications that require more invasive procedures.",
-      "Understanding when to seek help can ensure quicker recovery and prevent chronic damage."
+      "Understanding when to seek help can ensure quicker recovery and prevent chronic damage.",
     ],
     extra: {
       intro:
@@ -27,7 +27,7 @@ const blogPosts = [
         "Injuries that don’t heal with rest",
         "Limited range of motion",
         "Bone fractures or suspected fractures",
-        "Joint swelling or deformity"
+        "Joint swelling or deformity",
       ],
       symptomsTitle: "Warning Signs",
       symptomsIntro:
@@ -35,7 +35,10 @@ const blogPosts = [
       symptoms: [
         { title: "Severe Pain", desc: "Pain that interferes with daily life" },
         { title: "Swelling", desc: "Unexplained swelling in joints or limbs" },
-        { title: "Mobility Issues", desc: "Difficulty walking or using a limb" }
+        {
+          title: "Mobility Issues",
+          desc: "Difficulty walking or using a limb",
+        },
       ],
       reliefTitle: "Treatment Options",
       reliefIntro:
@@ -44,12 +47,12 @@ const blogPosts = [
         "Physical therapy and rehabilitation",
         "Pain management strategies",
         "Minimally invasive procedures",
-        "Surgical interventions when necessary"
+        "Surgical interventions when necessary",
       ],
       tipTitle: "Act Early for Better Outcomes",
       tipText:
-        "Timely consultation with an orthopedic specialist can prevent further complications and speed up recovery."
-    }
+        "Timely consultation with an orthopedic specialist can prevent further complications and speed up recovery.",
+    },
   },
   {
     id: 2,
@@ -61,7 +64,7 @@ const blogPosts = [
     paragraphs: [
       "Osteoarthritis is a degenerative joint disease that gradually wears away cartilage, leading to pain and stiffness.",
       "While age is a major factor, lifestyle, injuries, and genetics also play significant roles.",
-      "Early detection and consistent management can greatly improve quality of life."
+      "Early detection and consistent management can greatly improve quality of life.",
     ],
     extra: {
       intro:
@@ -73,15 +76,21 @@ const blogPosts = [
         "Obesity increasing stress on weight-bearing joints",
         "Repetitive stress due to job or activity",
         "Genetic predisposition",
-        "Joint abnormalities present since birth"
+        "Joint abnormalities present since birth",
       ],
       symptomsTitle: "Recognizing the Symptoms",
       symptomsIntro:
         "Osteoarthritis symptoms may develop gradually and worsen over time. Common signs include:",
       symptoms: [
         { title: "Joint Pain", desc: "Aching during or after movement" },
-        { title: "Stiffness", desc: "Noticeable after inactivity or waking up" },
-        { title: "Loss of Flexibility", desc: "Reduced range of motion in joints" }
+        {
+          title: "Stiffness",
+          desc: "Noticeable after inactivity or waking up",
+        },
+        {
+          title: "Loss of Flexibility",
+          desc: "Reduced range of motion in joints",
+        },
       ],
       reliefTitle: "Managing and Finding Relief",
       reliefIntro:
@@ -91,12 +100,12 @@ const blogPosts = [
         "Pain-relieving medications or anti-inflammatories",
         "Weight management to reduce joint pressure",
         "Joint support devices like braces or orthotics",
-        "Surgical options in severe cases (e.g., joint replacement)"
+        "Surgical options in severe cases (e.g., joint replacement)",
       ],
       tipTitle: "Don't Ignore Joint Pain",
       tipText:
-        "Osteoarthritis is manageable with timely care. Speak to an orthopaedic specialist if you’re experiencing ongoing symptoms."
-    }
+        "Osteoarthritis is manageable with timely care. Speak to an orthopaedic specialist if you’re experiencing ongoing symptoms.",
+    },
   },
   {
     id: 3,
@@ -108,7 +117,7 @@ const blogPosts = [
     paragraphs: [
       "Many people avoid joint replacement surgery due to misconceptions and fear of long recovery times.",
       "Modern surgical techniques and rehabilitation protocols have drastically improved success rates.",
-      "Knowing the facts can help you make informed healthcare decisions."
+      "Knowing the facts can help you make informed healthcare decisions.",
     ],
     extra: {
       intro:
@@ -119,15 +128,20 @@ const blogPosts = [
         "Artificial joints don’t last long",
         "Surgery is only for the elderly",
         "Pain after surgery is unbearable",
-        "Rehabilitation takes years"
+        "Rehabilitation takes years",
       ],
       symptomsTitle: "When Is It Needed?",
-      symptomsIntro:
-        "Joint replacement may be considered if you have:",
+      symptomsIntro: "Joint replacement may be considered if you have:",
       symptoms: [
-        { title: "Severe Joint Pain", desc: "Persistent pain despite other treatments" },
+        {
+          title: "Severe Joint Pain",
+          desc: "Persistent pain despite other treatments",
+        },
         { title: "Joint Deformity", desc: "Visible changes in joint shape" },
-        { title: "Loss of Function", desc: "Inability to carry out daily activities" }
+        {
+          title: "Loss of Function",
+          desc: "Inability to carry out daily activities",
+        },
       ],
       reliefTitle: "The Reality of Recovery",
       reliefIntro:
@@ -136,15 +150,14 @@ const blogPosts = [
         "Early mobilization after surgery",
         "Structured physiotherapy programs",
         "Minimally invasive surgical options",
-        "Prosthetics lasting 15–20 years or more"
+        "Prosthetics lasting 15–20 years or more",
       ],
       tipTitle: "Knowledge is Power",
       tipText:
-        "Don’t let myths hold you back from life-changing surgery. Speak to an orthopedic specialist to learn the facts."
-    }
-  }
+        "Don’t let myths hold you back from life-changing surgery. Speak to an orthopedic specialist to learn the facts.",
+    },
+  },
 ];
-
 
 const Blogs = () => {
   return (
@@ -156,7 +169,6 @@ const Blogs = () => {
         backgroundPosition: "center",
       }}
     >
-      {/* Overlay */}
       <div
         className="position-absolute top-0 start-0 w-100 h-100"
         style={{ backgroundColor: "rgba(255,255,255,0.95)", zIndex: 1 }}
@@ -175,7 +187,7 @@ const Blogs = () => {
 
         <div className="row g-lg-4 ms-lg-5 me-lg-5 ">
           {blogPosts.map((post) => (
-            <div className="col-md-4" key={post.id}>
+            <div className="col-md-4 mt-3feed" key={post.id}>
               <div className="blog-card h-100 rounded-4 overflow-hidden">
                 <img
                   src={post.image}

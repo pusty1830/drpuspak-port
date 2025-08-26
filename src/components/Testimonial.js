@@ -26,6 +26,27 @@ const testimonials = [
     message:
       "The clinic was clean and hygienic, and the staff were extremely supportive. The care provided was of high standard, and the clinic is well connected for easy access.",
   },
+   {
+    name: "Sandeep",
+    role: "Patient",
+    image: "https://randomuser.me/api/portraits/women/65.jpg",
+    message:
+      "Dr. Puspak Samal at Ortho Spine Care is an exceptional doctor with a deep understanding of orthopedic issues. His excellent treatment and compassionate care have made a significant impact on my recovery.",
+  },
+  {
+    name: "Sasmita",
+    role: "Patient",
+    image: "https://randomuser.me/api/portraits/women/65.jpg",
+    message:
+      "I had a great experience with Dr. Puspak Samal. Booking was easy, service was quick, and the supervision was good. The care provided was gentle and the prices were reasonable.",
+  },
+  {
+    name: "Saswat",
+    role: "Patient",
+    image: "https://randomuser.me/api/portraits/women/65.jpg",
+    message:
+      "The clinic was clean and hygienic, and the staff were extremely supportive. The care provided was of high standard, and the clinic is well connected for easy access.",
+  },
 ];
 
 const Testimonial = () => {

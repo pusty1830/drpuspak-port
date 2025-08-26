@@ -1,9 +1,10 @@
 import React from "react";
 import bgImage from "../assets/footer-bg.jpg"; // make sure to place image in assets folder
 import puspak from "../assets/puspak.jpg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const About = () => {
+  const navigate=useNavigate();
   return (
     <div style={{ overflowX: "hidden;" }}>
       <div className="container py-5 ">
@@ -76,7 +77,7 @@ const About = () => {
 
             {/* Buttons */}
             <div className="d-flex flex-wrap gap-3">
-              <button className="btn btn-primary fw-semibold px-4">
+              <button onClick={()=>navigate('/contact')} className="btn btn-primary fw-semibold px-4">
                 SEND MESSAGE <i className="bi bi-arrow-up-right ms-1"></i>
               </button>
               <button
