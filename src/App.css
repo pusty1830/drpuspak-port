@@ -308,3 +308,35 @@ doctor-bg {
   }
 }
 
+
+/* App.css or your component CSS file */
+.testimonial-next-btn {
+  position: absolute;
+  top: 50%;
+  right: -40px; /* default for large screens */
+  transform: translateY(-50%);
+  background: #007bff;
+  border: none;
+  color: white;
+  padding: 10px 15px;
+  font-size: 16px;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 10;
+  transition: right 0.3s, padding 0.3s;
+}
+
+/* Medium screens */
+@media (max-width: 1024px) {
+  .testimonial-next-btn {
+    right: -20px;
+    padding: 8px 12px;
+  }
+}
+
+/* Mobile screens */
+@media (max-width: 768px) {
+  .testimonial-next-btn {
+    display: none; /* hide button on mobile */
+  }
+}

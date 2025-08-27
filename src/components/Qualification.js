@@ -9,26 +9,26 @@ import award4 from "../assets/award-4.svg";
 import award5 from "../assets/award-6.svg";
 import award6 from "../assets/award-5.svg";
 const Qualification = () => {
-  const qualifications = [
+   const qualifications = [
     {
-      university: "Oxford University",
-      duration: "Jan 2014 - Dec 2018",
-      degree: "Bachelor of Medicine & Bachelor of Surgery ( MBBS )",
+      university: "Medical College, Kolkata",
+      duration: "2004 - 2010",
+      degree: "MBBS (Bachelor of Medicine & Bachelor of Surgery)",
     },
     {
-      university: "Oxford University",
-      duration: "Jan 2014 - Dec 2018",
-      degree: "Bachelor of Medicine & Bachelor of Surgery ( MBBS )",
+      university: "NRS Medical College, Kolkata",
+      duration: "2011 - 2014",
+      degree: "MS in Orthopedics",
     },
     {
-      university: "Oxford University",
-      duration: "Jan 2014 - Dec 2018",
-      degree: "Bachelor of Medicine & Bachelor of Surgery ( MBBS )",
+      university: "Fellowship in Spine Surgery",
+      duration: "2015",
+      degree: "Specialized Training in Spine & Joint Care",
     },
     {
-      university: "Oxford University",
-      duration: "Jan 2014 - Dec 2018",
-      degree: "Bachelor of Medicine & Bachelor of Surgery ( MBBS )",
+      university: "Advanced Orthopedic Workshops & Seminars",
+      duration: "Ongoing",
+      degree: "Continuous Medical Education & Training",
     },
   ];
 

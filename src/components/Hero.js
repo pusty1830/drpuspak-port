@@ -1,7 +1,9 @@
 import React from "react";
 import doctorImg from "../assets/puspakbgremove.png"; // replace with actual image path
-import drbg from "../assets/drbg.gif";
+import drps from "../assets/drps.gif";
 import { Link } from "react-router-dom";
+
+const repeatCount = 5;
 const Hero = () => {
   return (
     <section
@@ -22,7 +24,10 @@ const Hero = () => {
               patient care.
             </p>
             <div className="d-flex gap-3 mt-4">
-              <a href="https://clinic.orthospinecare.shop/" className="btn btn-primary">
+              <a
+                href="https://clinic.orthospinecare.shop/"
+                className="btn btn-primary"
+              >
                 BOOK APPOINTMENT <i className="bi bi-arrow-right"></i>
               </a>
               <Link to="/contact" className="btn btn-outline-light">
@@ -42,11 +47,11 @@ const Hero = () => {
 
             <div
               style={{
-                backgroundImage: `url(${drbg})`,
+                backgroundImage: `url(${drps})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
-                height: "500px", // adjust as needed
-                marginTop: "-500px", // overlap slightly if desired
+                height: "600px", // adjust as needed
+                marginTop: "-650px", // overlap slightly if desired
               }}
               className="doctor-bg"
             ></div>

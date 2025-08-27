@@ -1,5 +1,5 @@
 // src/pages/doctor/DoctorLogin.jsx
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -18,6 +18,7 @@ const LoginSchema = Yup.object().shape({
 
 const Login = () => {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (values, { setSubmitting }) => {
     const payload = {
@@ -44,21 +45,25 @@ const Login = () => {
   };
 
   return (
-    <div className="d-flex justify-content-center bg-light min-vh-100 py-5">
+    <div className="d-flex justify-content-center align-items-center bg-light min-vh-100">
       <div
-        className="card shadow-lg p-4 my-5"
-        style={{ maxWidth: "420px", width: "100%" }}
+        className="card shadow-lg p-4"
+        style={{
+          maxWidth: "400px",
+          width: "100%",
+          borderRadius: "16px",
+        }}
       >
         {/* Header */}
         <div className="text-center mb-4">
           <div
-            className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-2"
+            className="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mx-auto mb-3"
             style={{ width: "70px", height: "70px" }}
           >
             <i className="bi bi-hospital fs-2"></i>
           </div>
-          <h2 className="fw-bold">Doctor Portal</h2>
-          <p className="text-muted">Access your medical dashboard</p>
+          <h3 className="fw-bold">Sign in</h3>
+          <p className="text-muted small">Access your medical dashboard</p>
         </div>
 
         {/* Formik Form */}
@@ -90,7 +95,7 @@ const Login = () => {
                 />
               </div>
 
-              {/* Password */}
+              {/* Password with Eye */}
               <div className="mb-3">
                 <label className="form-label">Password</label>
                 <div className="input-group">
@@ -98,11 +103,23 @@ const Login = () => {
                     <i className="bi bi-lock"></i>
                   </span>
                   <Field
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     name="password"
                     className="form-control"
                     placeholder="Enter your password"
                   />
+                  <button
+                    type="button"
+                    className="btn btn-outline-secondary"
+                    onClick={() => setShowPassword(!showPassword)}
+                    tabIndex={-1} // Prevent tab focus on eye button
+                  >
+                    <i
+                      className={`bi ${
+                        showPassword ? "bi-eye-slash" : "bi-eye"
+                      }`}
+                    ></i>
+                  </button>
                 </div>
                 <ErrorMessage
                   name="password"
@@ -111,28 +128,24 @@ const Login = () => {
                 />
               </div>
 
-              {/* Remember & Forgot */}
-              <div className="d-flex justify-content-between align-items-center mb-3">
-                <div className="form-check">
-                  <input
-                    type="checkbox"
-                    id="remember"
-                    className="form-check-input"
-                  />
-                  <label htmlFor="remember" className="form-check-label">
-                    Remember me
-                  </label>
-                </div>
-                <a href="#" className="text-decoration-none">
-                  Forgot password?
-                </a>
+              {/* Remember */}
+              <div className="form-check mb-3">
+                <input
+                  type="checkbox"
+                  id="remember"
+                  className="form-check-input"
+                />
+                <label htmlFor="remember" className="form-check-label">
+                  Remember me
+                </label>
               </div>
 
               {/* Submit Button */}
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="btn btn-primary w-100"
+                className="btn btn-primary w-100 py-2 fw-semibold"
+                style={{ borderRadius: "8px" }}
               >
                 {isSubmitting ? (
                   <>
@@ -146,21 +159,6 @@ const Login = () => {
             </Form>
           )}
         </Formik>
-
-        {/* Footer */}
-        <div className="text-center mt-3">
-          <small className="text-muted">
-            New to the platform?{" "}
-            <a
-              href="https://wa.me/919876543210"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-decoration-none fw-semibold"
-            >
-              Contact admin
-            </a>
-          </small>
-        </div>
       </div>
     </div>
   );

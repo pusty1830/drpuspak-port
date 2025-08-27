@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation } from "swiper/modules";
+import { Navigation, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 
@@ -26,7 +26,7 @@ const testimonials = [
     message:
       "The clinic was clean and hygienic, and the staff were extremely supportive. The care provided was of high standard, and the clinic is well connected for easy access.",
   },
-   {
+  {
     name: "Sandeep",
     role: "Patient",
     image: "https://randomuser.me/api/portraits/women/65.jpg",
@@ -50,6 +50,8 @@ const testimonials = [
 ];
 
 const Testimonial = () => {
+  const nextBtnRef = useRef(null);
+
   return (
     <section className="testimonial-section py-5">
       <div className="container text-center">
@@ -62,31 +64,32 @@ const Testimonial = () => {
             centeredSlides={true}
             spaceBetween={30}
             loop={true}
+            autoplay={{
+              delay: 1000, // ✅ auto move every 1s
+              disableOnInteraction: false,
+            }}
+            speed={800} // ✅ smooth transition
             navigation={{
-              nextEl: ".swiper-next",
-              prevEl: ".swiper-prev",
+              nextEl: nextBtnRef.current, // ✅ connect ref
+            }}
+            onInit={(swiper) => {
+              swiper.params.navigation.nextEl = nextBtnRef.current;
+              swiper.navigation.init();
+              swiper.navigation.update();
             }}
             breakpoints={{
-              0: {
-                slidesPerView: 1,
-              },
-              768: {
-                slidesPerView: 2,
-              },
-              1024: {
-                slidesPerView: 3,
-              },
+              0: { slidesPerView: 1 },
+              768: { slidesPerView: 2 },
+              1024: { slidesPerView: 3 },
             }}
-            initialSlide={0} // ✅ Start from the first slide
-            // centeredSlides={false}
-            modules={[Navigation]}
+            modules={[Navigation, Autoplay]}
             className="testimonial-swiper"
           >
             {testimonials.map((testimonial, index) => (
               <SwiperSlide key={index}>
                 <div className="testimonial-wrapper">
                   <div className="profile-box">
-                    <div className="text  d-flex flex-column align-items-center">
+                    <div className="text d-flex flex-column align-items-center">
                       <h6>{testimonial.name}</h6>
                       <small>{testimonial.role}</small>
                     </div>
@@ -99,7 +102,11 @@ const Testimonial = () => {
             ))}
           </Swiper>
 
-          {/* Arrows */}
+          {/* ✅ Single Arrow (Next) with ref */}
+          {/* Single Arrow (Next) with ref */}
+          <button ref={nextBtnRef} className="testimonial-next-btn">
+            ➡
+          </button>
         </div>
       </div>
     </section>
