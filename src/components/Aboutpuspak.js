@@ -1,7 +1,34 @@
 import React from "react";
 import puspak from "../assets/puspak.png";
+import { motion } from "framer-motion";
 
 const Aboutpuspak = () => {
+  // Animation variants
+  const leftVariant = {
+    hidden: { opacity: 0, x: -100 },
+    visible: { opacity: 1, x: 0, transition: { duration: 0.8 } },
+  };
+
+  const rightVariant = {
+    hidden: { opacity: 0, x: 100 },
+    visible: { opacity: 1, x: 0, transition: { duration: 0.8 } },
+  };
+
+  const itemVariant = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, delay: i * 0.2 },
+    }),
+  };
+
+  const memberships = [
+    "Indian Orthopaedic Association (IOA)",
+    "Indian Society of Hip & Knee Surgeons (ISHKS)",
+    "AO Trauma Foundation",
+  ];
+
   return (
     <section
       className="py-5"
@@ -12,7 +39,13 @@ const Aboutpuspak = () => {
       <div className="container">
         <div className="row align-items-center">
           {/* Left Side Image */}
-          <div className="col-lg-6 mb-4 mb-lg-0 position-relative text-center">
+          <motion.div
+            className="col-lg-6 mb-4 mb-lg-0 position-relative text-center"
+            variants={leftVariant}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
             <div
               style={{
                 position: "absolute",
@@ -38,37 +71,45 @@ const Aboutpuspak = () => {
                 objectFit: "cover",
               }}
             />
-          </div>
+          </motion.div>
 
           {/* Right Side Content */}
-          <div className="col-lg-6">
-            <h2
+          <motion.div
+            className="col-lg-6"
+            variants={rightVariant}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            <motion.h2
               className="fw-bold mb-4"
-              style={{
-                color: "#1d3557",
-                fontSize: "2.2rem",
-              }}
+              style={{ color: "#1d3557", fontSize: "2.2rem" }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
             >
               Memberships & Associations
-            </h2>
-            <p className="text-muted mb-4" style={{ lineHeight: "1.6" }}>
+            </motion.h2>
+
+            <motion.p
+              className="text-muted mb-4"
+              style={{ lineHeight: "1.6" }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
               Proud member of leading national & international orthopedic
               associations, contributing to the advancement of healthcare and
               surgical excellence.
-            </p>
+            </motion.p>
 
             {/* Membership Items */}
-            {[
-              "Indian Orthopaedic Association (IOA)",
-              "Indian Society of Hip & Knee Surgeons (ISHKS)",
-              "AO Trauma Foundation",
-            ].map((membership, index) => (
-              <div
+            {memberships.map((membership, index) => (
+              <motion.div
                 key={index}
                 className="d-flex align-items-center p-3 mb-3"
                 style={{
-                  background:
-                    "rgba(255,255,255,0.7) border-box", // glassmorphism effect
+                  background: "rgba(255,255,255,0.7)",
                   boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
                   borderRadius: "16px",
                   backdropFilter: "blur(10px)",
@@ -76,6 +117,11 @@ const Aboutpuspak = () => {
                   transition: "all 0.3s ease",
                   cursor: "pointer",
                 }}
+                custom={index}
+                variants={itemVariant}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
                 onMouseEnter={(e) =>
                   (e.currentTarget.style.transform = "translateY(-6px)")
                 }
@@ -104,9 +150,9 @@ const Aboutpuspak = () => {
                 >
                   {membership}
                 </h5>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

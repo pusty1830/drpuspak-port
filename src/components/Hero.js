@@ -1,9 +1,8 @@
 import React from "react";
 import doctorImg from "../assets/puspakbgremove.png"; // replace with actual image path
-import drps from "../assets/drps.gif";
+import drps from "../assets/drppskk.gif";
 import { Link } from "react-router-dom";
 
-const repeatCount = 5;
 const Hero = () => {
   return (
     <section
@@ -51,7 +50,7 @@ const Hero = () => {
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 height: "600px", // adjust as needed
-                marginTop: "-650px", // overlap slightly if desired
+                marginTop: "-600px", // overlap slightly if desired
               }}
               className="doctor-bg"
             ></div>

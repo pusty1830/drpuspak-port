@@ -1,16 +1,40 @@
 import React from "react";
-import bgImage from "../assets/footer-bg.jpg"; // make sure to place image in assets folder
-import puspak from "../assets/puspak.jpg";
 import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import bgImage from "../assets/footer-bg.jpg";
+import puspak from "../assets/puspak.jpg";
 
 const About = () => {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
+
+  // Animation variants
+  const cardVariant = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+  };
+
+  const contentVariant = {
+    hidden: { opacity: 0, x: 50 },
+    visible: { opacity: 1, x: 0, transition: { duration: 0.6, delay: 0.3 } },
+  };
+
+  const buttonVariant = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.6 } },
+  };
+
   return (
-    <div style={{ overflowX: "hidden;" }}>
-      <div className="container py-5 ">
+    <div style={{ overflowX: "hidden" }}>
+      <div className="container py-5">
         <div className="row align-items-center g-lg-5 ms-lg-5 me-lg-5">
           {/* Left Card */}
-          <div className="col-lg-4 mb-4 mb-lg-0">
+          <motion.div
+            className="col-lg-4 mb-4 mb-lg-0"
+            variants={cardVariant}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
             <div
               className="text-white rounded-4 overflow-hidden shadow"
               style={{
@@ -22,12 +46,12 @@ const About = () => {
                 <hr className="opacity-25" />
                 <div className="mb-4 text-center">
                   <div className="fw-medium">Monday - Friday</div>
-                  <small>9:00 PM - 06:00 PM</small>
+                  <small>9:00 AM - 06:00 PM</small>
                 </div>
                 <hr className="opacity-25" />
                 <div className="text-center">
                   <div className="fw-medium">Saturday - Sunday</div>
-                  <small>9:00 PM - 06:00 PM</small>
+                  <small>9:00 AM - 06:00 PM</small>
                 </div>
               </div>
 
@@ -37,13 +61,19 @@ const About = () => {
                 style={{ backgroundColor: "#0066ff" }}
               >
                 <div className="fw-semibold">For Emergency Care</div>
-                <small>+208-6666-0112</small>
+                <small>+91 7873366631</small>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Right Content */}
-          <div className="col-lg-8">
+          <motion.div
+            className="col-lg-8"
+            variants={contentVariant}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
             {/* About Me badge */}
             <div className="mb-3">
               <span
@@ -76,8 +106,17 @@ const About = () => {
             </p>
 
             {/* Buttons */}
-            <div className="d-flex flex-wrap gap-3">
-              <button onClick={()=>navigate('/contact')} className="btn btn-primary fw-semibold px-4">
+            <motion.div
+              className="d-flex flex-wrap gap-3"
+              variants={buttonVariant}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              <button
+                onClick={() => navigate("/contact")}
+                className="btn btn-primary fw-semibold px-4"
+              >
                 SEND MESSAGE <i className="bi bi-arrow-up-right ms-1"></i>
               </button>
               <button
@@ -88,8 +127,8 @@ const About = () => {
               >
                 BOOK APPOINTMENT <i className="bi bi-arrow-up-right ms-1"></i>
               </button>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
     </div>
