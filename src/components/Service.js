@@ -64,7 +64,7 @@ const youtubeVideos = [
 
 const Service = () => {
   return (
-    <section className="py-5 bg-light">
+    <section className="py-5 bg-light" style={{ overflow: "hidden" }}>
       <div className="container">
         <div className="text-center mb-5">
           <span className="badge rounded-pill border border-primary text-primary px-3 py-2">

@@ -297,16 +297,31 @@ p {
 }
 
 
-
+/* 
 doctor-bg {
-  display: block; /* default */
+  display: block; 
 }
 
 @media (max-width: 768px) {
   .doctor-bg {
-    display: none; /* hide on screens <= 768px (mobile) */
+    display: none; 
+  }
+} */
+
+.doctor-bg {
+  background-size: cover;
+  background-position: center;
+  height: 600px; /* default for desktop */
+  margin-top: -600px;
+}
+
+@media (max-width: 768px) {
+  .doctor-bg {
+    height: 400px;      /* smaller height for mobile */
+    margin-top: -400px; /* adjust overlap */
   }
 }
+
 
 
 /* App.css or your component CSS file */

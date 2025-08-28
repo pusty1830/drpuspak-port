@@ -49,8 +49,7 @@ const Hero = () => {
                 backgroundImage: `url(${drps})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
-                height: "600px", // adjust as needed
-                marginTop: "-600px", // overlap slightly if desired
+                minHeight: "60vh", // 60% of viewport height
               }}
               className="doctor-bg"
             ></div>

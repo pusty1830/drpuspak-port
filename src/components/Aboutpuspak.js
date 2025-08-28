@@ -34,6 +34,7 @@ const Aboutpuspak = () => {
       className="py-5"
       style={{
         background: "linear-gradient(135deg, #f0f4ff, #ffffff)",
+        overflow: "hidden",
       }}
     >
       <div className="container">
