@@ -15,3 +15,15 @@ export function getReminderAccordingtoDate(payLoad) {
 export function createContact(payLoad) {
   return client.post("/Contact/create", payLoad);
 }
+
+export function sendReminderById(id) {
+  return client.post(`/reminder/send/${id}`);
+}
+
+export function sendBulkReminder(ids) {
+  return client.post(`/reminder/send-bulk`, { ids });
+}
+
+export function updateReminder(id, payLoad) {
+  return client.patch(`/Reminder/update-record/${id}`, payLoad);
+}

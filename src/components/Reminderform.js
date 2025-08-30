@@ -1,11 +1,19 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { Reminder } from "../services/services";
+import {
+  getReminderAccordingtoDate,
+  Reminder,
+  updateReminder,
+} from "../services/services";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 const Reminderform = () => {
+  const [existingReminder, setExistingReminder] = useState(null);
+  const [loading, setLoading] = useState(false); // 👈 Loader state
+  const navigate = useNavigate();
+
   const validationSchema = Yup.object({
     phone: Yup.string()
       .matches(/^[0-9]{10}$/, "Phone must be 10 digits")
@@ -18,6 +26,7 @@ const Reminderform = () => {
     address: Yup.string().required("Address is required"),
     disease: Yup.string().required("Disease / Concern is required"),
     location: Yup.string().required("Preferred Location is required"),
+    reason: Yup.string().required("Reason of Visit is required"), // 👈 New field
     visitDate: Yup.string().required("Next Visit duration is required"),
   });
 
@@ -55,7 +64,29 @@ const Reminderform = () => {
     return result.toISOString().split("T")[0];
   };
 
-  const navigate = useNavigate();
+  const fetchReminderByPhone = async (phone) => {
+    if (!phone || phone.length !== 10) return;
+    try {
+      setLoading(true); // 👈 start loader
+      const res = await getReminderAccordingtoDate({
+        data: { filter: "", patientNumber: phone },
+        page: 0,
+        pageSize: 1,
+        order: [["createdAt", "DESC"]],
+      });
+
+      if (res?.data?.data?.rows?.length > 0) {
+        setExistingReminder(res.data.data.rows[0]); // 👈 store old reminder
+      } else {
+        setExistingReminder(null);
+      }
+    } catch (err) {
+      console.error("Error fetching reminders:", err);
+      toast.error("❌ Failed to load reminders");
+    } finally {
+      setLoading(false); // 👈 stop loader
+    }
+  };
 
   return (
     <div
@@ -78,14 +109,28 @@ const Reminderform = () => {
                 🩺 Appointment Reminder Form
               </h3>
 
+              {/* Loader if fetching existing reminder */}
+              {loading && (
+                <div className="text-center mb-3">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                  <p className="mt-2 fw-semibold text-secondary">
+                    Checking existing reminder...
+                  </p>
+                </div>
+              )}
+
               <Formik
+                enableReinitialize
                 initialValues={{
-                  phone: "",
-                  name: "",
-                  age: "",
-                  address: "",
-                  disease: "",
-                  location: "",
+                  phone: existingReminder?.patientNumber || "",
+                  name: existingReminder?.patientName || "",
+                  age: existingReminder?.Age || "",
+                  address: existingReminder?.address || "",
+                  disease: existingReminder?.disease || "",
+                  location: existingReminder?.fromWhere || "",
+                  reason: existingReminder?.reason || "", // 👈 prefill reason if exists
                   visitDate: "",
                 }}
                 validationSchema={validationSchema}
@@ -97,19 +142,31 @@ const Reminderform = () => {
                     address: values.address,
                     disease: values.disease,
                     fromWhere: values.location,
+                    reason: values.reason, // 👈 add reason
                     nextVisit: calculateNextVisit(values.visitDate),
                   };
 
-                  Reminder(payLoad)
+                  const action = existingReminder
+                    ? updateReminder(existingReminder.id, payLoad)
+                    : Reminder(payLoad);
+
+                  action
                     .then((res) => {
-                      toast.success(res?.data?.msg || "Reminder saved!", {
-                        position:
-                          window.innerWidth < 768
-                            ? "bottom-center"
-                            : "top-right",
-                        autoClose: 3000,
-                      });
+                      toast.success(
+                        res?.data?.msg ||
+                          (existingReminder
+                            ? "Reminder updated!"
+                            : "Reminder saved!"),
+                        {
+                          position:
+                            window.innerWidth < 768
+                              ? "bottom-center"
+                              : "top-right",
+                          autoClose: 3000,
+                        }
+                      );
                       resetForm();
+                      setExistingReminder(null);
                     })
                     .catch(() => {
                       toast.error("Something went wrong!", {
@@ -120,11 +177,7 @@ const Reminderform = () => {
                         autoClose: 3000,
                       });
                     })
-                    .finally(() => {
-                      setSubmitting(false); // ✅ re-enable button after submit
-                    });
-
-                  console.log("Payload to backend:", payLoad);
+                    .finally(() => setSubmitting(false));
                 }}
               >
                 {({ isSubmitting, isValid, dirty }) => (
@@ -140,6 +193,7 @@ const Reminderform = () => {
                         name="phone"
                         className="form-control form-control-lg"
                         placeholder="Enter 10-digit phone number"
+                        onBlur={(e) => fetchReminderByPhone(e.target.value)} // 👈 check on blur
                       />
                       <ErrorMessage
                         name="phone"
@@ -255,6 +309,32 @@ const Reminderform = () => {
                       />
                     </div>
 
+                    {/* Reason of Visit */}
+                    <div className="mb-3">
+                      <label
+                        htmlFor="reason"
+                        className="form-label fw-semibold"
+                      >
+                        Reason of Visit
+                      </label>
+                      <Field
+                        as="select"
+                        id="reason"
+                        name="reason"
+                        className="form-select form-select-lg"
+                      >
+                        <option value="">-- Select Reason --</option>
+                        <option value="operation">Operation</option>
+                        <option value="opd">OPD</option>
+                        <option value="revisit">Revisit</option>
+                      </Field>
+                      <ErrorMessage
+                        name="reason"
+                        component="div"
+                        className="text-danger"
+                      />
+                    </div>
+
                     {/* Visit Date */}
                     <div className="mb-3">
                       <label
@@ -296,22 +376,18 @@ const Reminderform = () => {
                           borderRadius: "30px",
                           padding: "10px",
                         }}
-                        disabled={isSubmitting || !isValid || !dirty} // ✅ disable button
+                        disabled={isSubmitting || !isValid || !dirty}
                       >
-                        {isSubmitting ? "Booking..." : "Book Reminder ✅"}
+                        {isSubmitting
+                          ? "Booking..."
+                          : existingReminder
+                          ? "Update Reminder 🔄"
+                          : "Book Reminder ✅"}
                       </button>
                     </div>
                   </Form>
                 )}
               </Formik>
-
-              <p
-                className="text-center text-muted mt-4"
-                style={{ fontSize: "0.9rem" }}
-              >
-                You’ll receive a confirmation on your registered email or
-                number.
-              </p>
             </div>
           </div>
         </div>

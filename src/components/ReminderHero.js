@@ -1,17 +1,28 @@
-import React from 'react';
+import React from "react";
 
-const ReminderHero = ({ onAddReminder, onViewList, onViewCreatedAt, activePage }) => {
+const ReminderHero = ({
+  onAddReminder,
+  onViewList,
+  onViewCreatedAt,
+  activePage,
+  onViewBulk,
+}) => {
   return (
-    <section className="py-1 text-white" style={{ background: '#032e63' }}>
+    <section className="py-1 text-white" style={{ background: "#032e63" }}>
       <div className="container text-center py-5">
         <h1 className="fw-bold display-5">Reminder</h1>
 
         <nav aria-label="breadcrumb">
           <ol className="breadcrumb justify-content-center mt-3">
             <li className="breadcrumb-item">
-              <a href="/" className="text-white text-decoration-none">Home</a>
+              <a href="/" className="text-white text-decoration-none">
+                Home
+              </a>
             </li>
-            <li className="breadcrumb-item active text-white" aria-current="page">
+            <li
+              className="breadcrumb-item active text-white"
+              aria-current="page"
+            >
               Reminder
             </li>
           </ol>
@@ -21,7 +32,9 @@ const ReminderHero = ({ onAddReminder, onViewList, onViewCreatedAt, activePage }
         <div className="mt-4 d-flex justify-content-center gap-3">
           <button
             className={`fw-bold px-4 ${
-              activePage === 'form' ? 'btn btn-light text-dark' : 'btn btn-outline-light'
+              activePage === "form"
+                ? "btn btn-light text-dark"
+                : "btn btn-outline-light"
             }`}
             onClick={onAddReminder}
           >
@@ -30,7 +43,9 @@ const ReminderHero = ({ onAddReminder, onViewList, onViewCreatedAt, activePage }
 
           <button
             className={`fw-bold px-4 ${
-              activePage === 'list' ? 'btn btn-light text-dark' : 'btn btn-outline-light'
+              activePage === "list"
+                ? "btn btn-light text-dark"
+                : "btn btn-outline-light"
             }`}
             onClick={onViewList}
           >
@@ -39,11 +54,23 @@ const ReminderHero = ({ onAddReminder, onViewList, onViewCreatedAt, activePage }
 
           <button
             className={`fw-bold px-4 ${
-              activePage === 'createdAt' ? 'btn btn-light text-dark' : 'btn btn-outline-light'
+              activePage === "createdAt"
+                ? "btn btn-light text-dark"
+                : "btn btn-outline-light"
             }`}
             onClick={onViewCreatedAt}
           >
             🗓️ CreatedAt List
+          </button>
+          <button
+            className={`fw-bold px-4 ${
+              activePage === "bulk"
+                ? "btn btn-light text-dark"
+                : "btn btn-outline-light"
+            }`}
+            onClick={onViewBulk}
+          >
+            📢 Bulk Send
           </button>
         </div>
       </div>

@@ -2,19 +2,39 @@ import React, { useEffect, useState } from "react";
 import { getReminderAccordingtoDate } from "./services/services";
 
 const CreatedAtReminderList = () => {
-  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState(""); // date string in YYYY-MM-DD
   const [allReminders, setAllReminders] = useState([]);
   const [filteredReminders, setFilteredReminders] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // New states for search + reason filter
+  const [search, setSearch] = useState("");
+  const [reasonFilter, setReasonFilter] = useState("");
 
   useEffect(() => {
+    // Set today's date by default
+    const today = new Date().toISOString().split("T")[0];
+    setSelectedDate(today);
+  }, []);
+
+  useEffect(() => {
+    setLoading(true);
     // Fetch all reminders without date filter
-    getReminderAccordingtoDate({ data: {}, page: 0, pageSize: 100, order: [["createdAt", "ASC"]] })
+    getReminderAccordingtoDate({
+      data: { filter: "" },
+      page: 0,
+      pageSize: 100,
+      order: [["createdAt", "ASC"]],
+    })
       .then((res) => {
         setAllReminders(res?.data?.data?.rows || []);
       })
       .catch((err) => {
         console.error("Error fetching reminders:", err);
         setAllReminders([]);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
 
@@ -24,14 +44,30 @@ const CreatedAtReminderList = () => {
       return;
     }
 
-    // Filter reminders by createdAt date on frontend
+    // Filter reminders by createdAt date
     const filtered = allReminders.filter((r) => {
       const createdDate = new Date(r.createdAt).toISOString().split("T")[0];
       return createdDate === selectedDate;
     });
 
-    setFilteredReminders(filtered);
-  }, [selectedDate, allReminders]);
+    // Apply search filter
+    const searchLower = search.toLowerCase();
+    const searched = filtered.filter((r) => {
+      return (
+        r.patientName?.toLowerCase().includes(searchLower) ||
+        r.patientNumber?.includes(searchLower) ||
+        r.disease?.toLowerCase().includes(searchLower)
+      );
+    });
+
+    // Apply reason dropdown filter (if selected)
+    const finalFiltered =
+      reasonFilter !== ""
+        ? searched.filter((r) => r.reason === reasonFilter)
+        : searched;
+
+    setFilteredReminders(finalFiltered);
+  }, [selectedDate, allReminders, search, reasonFilter]);
 
   return (
     <div
@@ -45,51 +81,109 @@ const CreatedAtReminderList = () => {
         📅 Check Reminders by Created Date
       </h3>
 
-      {/* Date Picker */}
-      <div className="mb-4">
-        <label className="form-label fw-semibold">Select Created Date</label>
-        <input
-          type="date"
-          className="form-control form-control-lg"
-          value={selectedDate}
-          onChange={(e) => setSelectedDate(e.target.value)}
-        />
+      {/* Filters Row */}
+      <div className="row mb-4 g-3">
+        {/* Date Picker */}
+        <div className="col-md-4">
+          <label className="form-label fw-semibold">Select Created Date</label>
+          <input
+            type="date"
+            className="form-control form-control-lg"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+          />
+        </div>
+
+        {/* Search */}
+        <div className="col-md-4">
+          <label className="form-label fw-semibold">Search</label>
+          <input
+            type="text"
+            className="form-control form-control-lg"
+            placeholder="🔍 Search by name, phone, or disease"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+
+        {/* Reason Filter */}
+        <div className="col-md-4">
+          <label className="form-label fw-semibold">Filter by Reason</label>
+          <select
+            className="form-select form-select-lg"
+            value={reasonFilter}
+            onChange={(e) => setReasonFilter(e.target.value)}
+          >
+            <option value="">All Reasons</option>
+            <option value="opd">OPD</option>
+            <option value="operation">Operation</option>
+            <option value="revisit">Revisit</option>
+          </select>
+        </div>
       </div>
 
-      {/* Reminders Table */}
-      {selectedDate && (
-        <div className="card shadow-lg border-0 rounded-4 p-3">
-          <h5 className="text-secondary fw-bold mb-3">
-            Reminders created on {selectedDate}:
-          </h5>
-
-          {filteredReminders.length > 0 ? (
-            <table className="table table-striped table-hover">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Phone</th>
-                  <th>Disease / Concern</th>
-                  <th>Next Visit</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredReminders.map((r, i) => (
-                  <tr key={i}>
-                    <td>{r.patientName}</td>
-                    <td>{r.patientNumber}</td>
-                    <td>{r.disease}</td>
-                    <td>{r.nextVisit?.split("T")[0] || "-"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <p className="text-muted">
-              No reminders found for this created date.
-            </p>
-          )}
+      {/* Loader */}
+      {loading ? (
+        <div className="d-flex justify-content-center align-items-center p-5">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
         </div>
+      ) : (
+        selectedDate && (
+          <div className="card shadow-lg border-0 rounded-4 p-3">
+            <h5 className="text-secondary fw-bold mb-3">
+              Reminders created on {selectedDate}:
+            </h5>
+
+            {filteredReminders.length > 0 ? (
+              <table className="table table-striped table-hover">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Disease / Concern</th>
+                    <th>Reason</th>
+                    <th>Next Visit</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredReminders.map((r, i) => (
+                    <tr key={i}>
+                      <td>{r.patientName}</td>
+                      <td>{r.patientNumber}</td>
+                      <td>{r.disease}</td>
+                      <td>
+                        <span
+                          className="badge"
+                          style={{
+                            backgroundColor: "#0d6efd", // Bootstrap primary blue
+                            color: "white",
+                            padding: "6px 12px",
+                            borderRadius: "12px",
+                            fontSize: "0.9rem",
+                          }}
+                        >
+                          {r.reason === "opd"
+                            ? "OPD"
+                            : r.reason === "operation"
+                            ? "Operation"
+                            : "Revisit"}
+                        </span>
+                      </td>
+
+                      <td>{r.nextVisit?.split("T")[0] || "-"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p className="text-muted">
+                No reminders found for this created date.
+              </p>
+            )}
+          </div>
+        )
       )}
     </div>
   );
