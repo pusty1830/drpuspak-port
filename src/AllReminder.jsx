@@ -4,11 +4,12 @@ import {
   sendBulkReminder,
 } from "./services/services";
 import { toast } from "react-toastify";
+import * as XLSX from "xlsx";
 
 const AllReminders = () => {
   const [search, setSearch] = useState("");
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedReason, setSelectedReason] = useState(""); // ✅ new filter state
+  const [selectedDate, setSelectedDate] = useState(null); // filter by createdAt
+  const [selectedReason, setSelectedReason] = useState("");
   const [selected, setSelected] = useState([]);
   const [reminders, setReminders] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -18,20 +19,14 @@ const AllReminders = () => {
     const fetchReminders = async () => {
       setLoading(true);
       try {
-        let payload = {
+        const payload = {
           data: { filter: "" },
           page: 0,
           pageSize: 100,
           order: [["createdAt", "ASC"]],
         };
 
-        if (selectedDate) {
-          const dbFormat = new Date(selectedDate + "T00:00:00.000Z").toISOString();
-          payload.data.nextVisit = dbFormat;
-        }
-
         const res = await getReminderAccordingtoDate(payload);
-
         setReminders(res?.data?.data?.rows || []);
       } catch (err) {
         console.error("Error fetching reminders:", err);
@@ -42,9 +37,9 @@ const AllReminders = () => {
     };
 
     fetchReminders();
-  }, [selectedDate]);
+  }, []);
 
-  // ✅ Apply search + reason filter
+  // Filter by date (createdAt), reason, and search
   const filtered = reminders.filter((r) => {
     const matchesSearch =
       r.patientName?.toLowerCase().includes(search.toLowerCase()) ||
@@ -52,7 +47,11 @@ const AllReminders = () => {
 
     const matchesReason = selectedReason ? r.reason === selectedReason : true;
 
-    return matchesSearch && matchesReason;
+    const matchesDate = selectedDate
+      ? new Date(r.createdAt).toISOString().split("T")[0] === selectedDate
+      : true;
+
+    return matchesSearch && matchesReason && matchesDate;
   });
 
   const toggleSelect = (id) => {
@@ -93,6 +92,28 @@ const AllReminders = () => {
     }
   };
 
+  // Export filtered data to Excel
+  // Export filtered data to Excel
+  const exportToExcel = () => {
+    const dataForExcel = filtered.map((r) => ({
+      ID: r.id,
+      Name: r.patientName,
+      Phone: r.patientNumber,
+      Age: r.Age,
+      Address: r.address,
+      "Disease / Concern": r.disease,
+      From: r.fromWhere,
+      Reason: r.reason,
+      "Created At": r.createdAt?.split("T")[0],
+      "Next Visit": r.nextVisit?.split("T")[0] || "-",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(dataForExcel);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Reminders");
+    XLSX.writeFile(workbook, "reminders.xlsx");
+  };
+
   return (
     <div className="container py-5">
       <div className="card shadow border-0 rounded-3">
@@ -102,7 +123,7 @@ const AllReminders = () => {
             <h2 className="h4 fw-bold text-dark mb-0">📋 Patient Reminders</h2>
 
             <div className="d-flex gap-2 flex-wrap">
-              {/* Date Picker */}
+              {/* CreatedAt Date Picker */}
               <input
                 type="date"
                 className="form-control"
@@ -132,6 +153,11 @@ const AllReminders = () => {
                 onChange={(e) => setSearch(e.target.value)}
                 className="form-control"
               />
+
+              {/* Excel Download */}
+              <button className="btn btn-primary" onClick={exportToExcel}>
+                📥 Export to Excel
+              </button>
             </div>
           </div>
 
@@ -147,54 +173,62 @@ const AllReminders = () => {
               </div>
             </div>
           ) : (
-            <div className="table-responsive">
-              <table className="table table-hover align-middle">
-                <thead className="table-primary">
-                  <tr>
-                    <th scope="col">Select</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Phone</th>
-                    <th scope="col">Disease / Concern</th>
-                    <th scope="col">Reason</th> {/* ✅ added */}
-                    <th scope="col">Next Visit</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filtered.length > 0 ? (
-                    filtered.map((r) => (
-                      <tr key={r.id}>
-                        <td className="text-center">
-                          <input
-                            type="checkbox"
-                            className="form-check-input"
-                            checked={selected.includes(r.id)}
-                            onChange={() => toggleSelect(r.id)}
-                          />
-                        </td>
-                        <td className="fw-semibold">{r.patientName}</td>
-                        <td className="text-muted">{r.patientNumber}</td>
-                        <td>{r.disease}</td>
-                        <td>
-                          <span className="badge bg-info text-dark">
-                            {r.reason}
-                          </span>
-                        </td>
-                        <td>{r.nextVisit}</td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan="6"
-                        className="text-center py-4 text-muted fst-italic"
-                      >
-                        No reminders found
+            <table className="table table-hover align-middle">
+              <thead className="table-primary">
+                <tr>
+                  <th>Select</th>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Age</th>
+                  <th>Address</th>
+                  <th>Disease / Concern</th>
+                  <th>From</th>
+                  <th>Reason</th>
+                  <th>Created At</th>
+                  <th>Next Visit</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.length > 0 ? (
+                  filtered.map((r) => (
+                    <tr key={r.id}>
+                      <td className="text-center">
+                        <input
+                          type="checkbox"
+                          className="form-check-input"
+                          checked={selected.includes(r.id)}
+                          onChange={() => toggleSelect(r.id)}
+                        />
                       </td>
+                      <td>{r.id}</td>
+                      <td>{r.patientName}</td>
+                      <td>{r.patientNumber}</td>
+                      <td>{r.Age}</td>
+                      <td>{r.address}</td>
+                      <td>{r.disease}</td>
+                      <td>{r.fromWhere}</td>
+                      <td>
+                        <span className="badge bg-info text-dark">
+                          {r.reason}
+                        </span>
+                      </td>
+                      <td>{r.createdAt?.split("T")[0]}</td>
+                      <td>{r.nextVisit?.split("T")[0] || "-"}</td>
                     </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="11"
+                      className="text-center py-4 text-muted fst-italic"
+                    >
+                      No reminders found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           )}
 
           {/* Action Button */}

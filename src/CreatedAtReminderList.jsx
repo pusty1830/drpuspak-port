@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getReminderAccordingtoDate } from "./services/services";
+import * as XLSX from "xlsx";
 
 const CreatedAtReminderList = () => {
   const [selectedDate, setSelectedDate] = useState(""); // date string in YYYY-MM-DD
@@ -33,9 +34,7 @@ const CreatedAtReminderList = () => {
         console.error("Error fetching reminders:", err);
         setAllReminders([]);
       })
-      .finally(() => {
-        setLoading(false);
-      });
+      .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
@@ -69,13 +68,41 @@ const CreatedAtReminderList = () => {
     setFilteredReminders(finalFiltered);
   }, [selectedDate, allReminders, search, reasonFilter]);
 
+  // ✅ Export filtered reminders to Excel
+  const exportToExcel = () => {
+    if (filteredReminders.length === 0) {
+      alert("No reminders to export!");
+      return;
+    }
+
+    const dataForExcel = filteredReminders.map((r) => ({
+      ID: r.id,
+      Name: r.patientName,
+      Phone: r.patientNumber,
+      Age: r.Age,
+      Address: r.address,
+      "Disease / Concern": r.disease,
+      From: r.fromWhere,
+      Reason:
+        r.reason === "opd"
+          ? "OPD"
+          : r.reason === "operation"
+          ? "Operation"
+          : "Revisit",
+      "Created At": r.createdAt?.split("T")[0],
+      "Next Visit": r.nextVisit?.split("T")[0] || "-",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(dataForExcel);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Reminders");
+    XLSX.writeFile(workbook, `reminders_${selectedDate}.xlsx`);
+  };
+
   return (
     <div
       className="p-4"
-      style={{
-        background: "linear-gradient(135deg, #f8fbff, #e0f7fa)",
-        minHeight: "100vh",
-      }}
+      style={{ background: "linear-gradient(135deg, #f8fbff, #e0f7fa)", minHeight: "100vh" }}
     >
       <h3 className="text-primary fw-bold mb-4">
         📅 Check Reminders by Created Date
@@ -84,7 +111,7 @@ const CreatedAtReminderList = () => {
       {/* Filters Row */}
       <div className="row mb-4 g-3">
         {/* Date Picker */}
-        <div className="col-md-4">
+        <div className="col-md-3">
           <label className="form-label fw-semibold">Select Created Date</label>
           <input
             type="date"
@@ -107,7 +134,7 @@ const CreatedAtReminderList = () => {
         </div>
 
         {/* Reason Filter */}
-        <div className="col-md-4">
+        <div className="col-md-3">
           <label className="form-label fw-semibold">Filter by Reason</label>
           <select
             className="form-select form-select-lg"
@@ -120,71 +147,83 @@ const CreatedAtReminderList = () => {
             <option value="revisit">Revisit</option>
           </select>
         </div>
+
+        {/* Excel Export Button */}
+        <div className="col-md-2 d-flex align-items-end">
+          <button className="btn btn-primary w-100" onClick={exportToExcel}>
+            📥 Export to Excel
+          </button>
+        </div>
       </div>
 
-      {/* Loader */}
+      {/* Loader / Table */}
       {loading ? (
         <div className="d-flex justify-content-center align-items-center p-5">
           <div className="spinner-border text-primary" role="status">
             <span className="visually-hidden">Loading...</span>
           </div>
         </div>
-      ) : (
-        selectedDate && (
-          <div className="card shadow-lg border-0 rounded-4 p-3">
-            <h5 className="text-secondary fw-bold mb-3">
-              Reminders created on {selectedDate}:
-            </h5>
+      ) : selectedDate ? (
+        <div className="card shadow-lg border-0 rounded-4 p-3">
+          <h5 className="text-secondary fw-bold mb-3">
+            Reminders created on {selectedDate}:
+          </h5>
 
-            {filteredReminders.length > 0 ? (
-              <table className="table table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Phone</th>
-                    <th>Disease / Concern</th>
-                    <th>Reason</th>
-                    <th>Next Visit</th>
+          {filteredReminders.length > 0 ? (
+            <table className="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Phone</th>
+                  <th>Age</th>
+                  <th>Address</th>
+                  <th>Disease / Concern</th>
+                  <th>From</th>
+                  <th>Reason</th>
+                  <th>Created At</th>
+                  <th>Next Visit</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredReminders.map((r, i) => (
+                  <tr key={i}>
+                    <td>{r.id}</td>
+                    <td>{r.patientName}</td>
+                    <td>{r.patientNumber}</td>
+                    <td>{r.Age}</td>
+                    <td>{r.address}</td>
+                    <td>{r.disease}</td>
+                    <td>{r.fromWhere}</td>
+                    <td>
+                      <span
+                        className="badge"
+                        style={{
+                          backgroundColor: "#0d6efd",
+                          color: "white",
+                          padding: "6px 12px",
+                          borderRadius: "12px",
+                          fontSize: "0.9rem",
+                        }}
+                      >
+                        {r.reason === "opd"
+                          ? "OPD"
+                          : r.reason === "operation"
+                          ? "Operation"
+                          : "Revisit"}
+                      </span>
+                    </td>
+                    <td>{r.createdAt?.split("T")[0]}</td>
+                    <td>{r.nextVisit?.split("T")[0] || "-"}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  {filteredReminders.map((r, i) => (
-                    <tr key={i}>
-                      <td>{r.patientName}</td>
-                      <td>{r.patientNumber}</td>
-                      <td>{r.disease}</td>
-                      <td>
-                        <span
-                          className="badge"
-                          style={{
-                            backgroundColor: "#0d6efd", // Bootstrap primary blue
-                            color: "white",
-                            padding: "6px 12px",
-                            borderRadius: "12px",
-                            fontSize: "0.9rem",
-                          }}
-                        >
-                          {r.reason === "opd"
-                            ? "OPD"
-                            : r.reason === "operation"
-                            ? "Operation"
-                            : "Revisit"}
-                        </span>
-                      </td>
-
-                      <td>{r.nextVisit?.split("T")[0] || "-"}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : (
-              <p className="text-muted">
-                No reminders found for this created date.
-              </p>
-            )}
-          </div>
-        )
-      )}
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p className="text-muted">No reminders found for this created date.</p>
+          )}
+        </div>
+      ) : null}
     </div>
   );
 };
